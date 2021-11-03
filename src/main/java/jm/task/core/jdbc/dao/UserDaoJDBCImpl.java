@@ -15,9 +15,9 @@ public class UserDaoJDBCImpl implements UserDao{
 
     public void createUsersTable() {
         try (Connection connection = Util.getMySQLConnection()) {
-            String sql = "CREATE TABLE USERS (id BIGINT not null AUTO_INCREMENT PRIMARY KEY, " +
-                    "name VARCHAR(255) not null, " +
-                    "lastName VARCHAR(255) not null, " +
+            String sql = "CREATE TABLE IF NOT EXISTS users (id BIGINT not null AUTO_INCREMENT PRIMARY KEY, " +
+                    "name VARCHAR(50) not null, " +
+                    "lastName VARCHAR(50) not null, " +
                     "age TINYINT not null)";
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
@@ -30,7 +30,7 @@ public class UserDaoJDBCImpl implements UserDao{
 
     public void dropUsersTable() {
         try(Connection connection = Util.getMySQLConnection()) {
-            String sql = "DROP TABLE USERS";
+            String sql = "DROP TABLE IF EXISTS users";
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
         }catch (SQLSyntaxErrorException e) {
@@ -43,7 +43,7 @@ public class UserDaoJDBCImpl implements UserDao{
     public void saveUser(String name, String lastName, byte age){
         try (Connection connection = Util.getMySQLConnection()){
             Statement statement = connection.createStatement();
-            String sql = "INSERT INTO USERS( name, lastName, age) VALUES('"
+            String sql = "INSERT INTO users( name, lastName, age) VALUES('"
                     + name +"', '"
                     +  lastName + "', "
                     + age+ ")";
@@ -57,7 +57,7 @@ public class UserDaoJDBCImpl implements UserDao{
     public void removeUserById(long id) {
         try(Connection connection = Util.getMySQLConnection()) {
             Statement statement = connection.createStatement();
-            String sql = "DELETE FROM USERS WHERE id = " + id;
+            String sql = "DELETE FROM users WHERE id = " + id;
             statement.executeUpdate(sql);
         } catch (SQLException | ClassNotFoundException e){
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class UserDaoJDBCImpl implements UserDao{
         List<User> list= new ArrayList<>();
         try(Connection connection = Util.getMySQLConnection()) {
             Statement statement = connection.createStatement();
-            String sql = "SELECT id, name, lastName, age FROM USERS";
+            String sql = "SELECT * FROM USERS";
             ResultSet rs = statement.executeQuery(sql);
             while (rs.next()){
                 User user = new User();
@@ -87,7 +87,7 @@ public class UserDaoJDBCImpl implements UserDao{
     public void cleanUsersTable() {
         try(Connection connection = Util.getMySQLConnection()) {
             Statement statement = connection.createStatement();
-            String sql = "TRUNCATE USERS";
+            String sql = "TRUNCATE users";
             statement.executeUpdate(sql);
         } catch (SQLException | ClassNotFoundException e){
             e.printStackTrace();
